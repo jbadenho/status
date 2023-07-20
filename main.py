@@ -98,11 +98,8 @@ def home():
 
     return render_template('index.html', containers=container_data, server_name=server_name)
 
-def create_app():
-   return app.run()
+# Define the uWSGI callable application
+application = app
 
 if __name__ == '__main__':
-    #from waitress import serve
-    #serve(app, host="127.0.0.1", port=5000)
-    #serve(app.run(), host="0.0.0.0", port=8080)
     app.run()
