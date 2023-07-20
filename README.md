@@ -26,8 +26,15 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 
+### for development
+
 ```bash
 flask --app main.py run --debug
+```
+### for production
+
+```bash
+uwsgi --ini uwsgi.ini --honour-stdin
 ```
 
 ## to deactivate venv
