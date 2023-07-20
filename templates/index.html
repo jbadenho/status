@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Container Status Checker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Container Status Checker</h1>
+        {% if server_name %}
+        <h2>Server: {{ server_name }}</h2>
+        {% endif %}
+
+        {% if containers %}
+        <h3>Container Status:</h3>
+        <ul>
+        {% for container in containers %}
+            {% set container_name_with_status = container[0] %}
+            <li>
+                <div class="container-name">
+                    {{ container_name_with_status }}
+                </div>
+                <div class="container-status {% if container[1] and ('Up' in container[1] or 'healthy' in container[1]) %}status-up{% elif container[1] and ('Up' in container[1] and 'starting' in container[1]) %}status-down{% else %}status-down{% endif %}">
+                    {% if container[1] %}
+                        {{ container[1] }}
+                    {% else %}
+                        <span class="no-container">No Containers</span>
+                    {% endif %}
+                </div>
+            </li>
+        {% endfor %}
+        </ul>
+        {% else %}
+        <p><span class="no-container">No Containers</span></p>
+        {% endif %}
+    </div>
+</body>
+</html>
