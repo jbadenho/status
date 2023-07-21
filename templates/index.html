@@ -1,39 +1,93 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html>
 <head>
     <title>Container Status Checker</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../static/css/styles.css">
+    <!-- Include Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
     <div class="container">
         <h1>Container Status Checker</h1>
-        {% if server_name %}
-        <h2>Server: {{ server_name }}</h2>
-        {% endif %}
-
-        {% if containers %}
-        <h3>Container Status:</h3>
-        <ul>
-        {% for container in containers %}
-            {% set container_name_with_status = container[0] %}
-            <li>
-                <div class="container-name">
-                    {{ container_name_with_status }}
-                </div>
-                <div class="container-status {% if container[1] and ('Up' in container[1] or 'healthy' in container[1]) %}status-up{% elif container[1] and ('Up' in container[1] and 'starting' in container[1]) %}status-down{% else %}status-down{% endif %}">
-                    {% if container[1] %}
-                        {{ container[1] }}
+        <ul class="nav nav-tabs" id="serverTabs" role="tablist">
+            {% for server_name, containers in server_containers.items() %}
+                <li class="nav-item">
+                    <a class="nav-link {% if loop.first %}active{% endif %}" id="tab-{{ loop.index }}" data-toggle="tab" href="#server-{{ loop.index }}" role="tab" aria-controls="server-{{ loop.index }}" aria-selected="{% if loop.first %}true{% else %}false{% endif %}">{{ server_name }}</a>
+                </li>
+            {% endfor %}
+            <!-- Add the "Summary" tab -->
+            <li class="nav-item">
+                <a class="nav-link" id="tab-summary" data-toggle="tab" href="#server-summary" role="tab" aria-controls="server-summary" aria-selected="false">Summary</a>
+            </li>
+        </ul>
+        <div class="tab-content" id="serverTabsContent">
+            {% for server_name, containers in server_containers.items() %}
+                <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="server-{{ loop.index }}" role="tabpanel" aria-labelledby="tab-{{ loop.index }}">
+                    <h2>Server: {{ server_name }}</h2>
+                    {% if containers %}
+                    <h3>Container Status:</h3>
+                    <ul>
+                        {% for container_info in containers %}
+                            {% set container_name = container_info[0] %}
+                            {% set container_status = container_info[1] %}
+                            <li>
+                                <div class="container-name">
+                                    {{ container_name }}
+                                </div>
+                                <div class="container-status {% if container_status and ('Up' in container_status or 'healthy' in container_status) %}status-up{% elif container_status and ('Up' in container_status and 'starting' in container_status) %}status-down{% else %}status-down{% endif %}">
+                                    {% if container_status %}
+                                        {{ container_status }}
+                                    {% else %}
+                                        <span class="no-container">No Containers</span>
+                                    {% endif %}
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
                     {% else %}
-                        <span class="no-container">No Containers</span>
+                    <h3>No Containers</h3>
+                    <ul>
+                        <li>
+                            <div class="container-name">
+                                {{ server_name }}
+                            </div>
+                            <div class="container-status status-down">
+                                <span class="no-container">No Containers</span>
+                            </div>
+                        </li>
+                    </ul>
                     {% endif %}
                 </div>
-            </li>
-        {% endfor %}
-        </ul>
-        {% else %}
-        <p><span class="no-container">No Containers</span></p>
-        {% endif %}
+            {% endfor %}
+            <!-- Add the "Summary" tab content -->
+            <div class="tab-pane fade" id="server-summary" role="tabpanel" aria-labelledby="tab-summary">
+                <h2>Server: Summary</h2>
+                <h3>Status:</h3>
+                <ul>
+                    <li>
+                        <div class="container-name">
+                            Containers
+                        </div>
+                        {% if all_green %}
+                        <div class="container-status status-up">
+                            All Good
+                        </div>
+                        {% else %}
+                        <div class="container-status status-down">
+                            Some Containers Are Down
+                        </div>
+                        {% endif %}
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
+
+    <!-- Include Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

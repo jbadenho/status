@@ -1,6 +1,3 @@
-uwsgi
 flask
 paramiko
-#waitress
-pysqlite3
-#apscheduler
+ipaddress
